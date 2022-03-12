@@ -1,0 +1,100 @@
+#Options
+GenerateScanner = true
+GenerateParser = false
+Language = C++
+ScannerName = Lexico
+ScannerCaseSensitive = true
+ScannerTable = Full
+Input = Stream
+#RegularDefinitions
+DIGITS : [0-9]
+LETTER : [A-Za-z]
+WHITESPACE :[\n\s\t\r\ ]*
+BAR : ["/"]
+COMMENTS: {BAR}{BAR}[^}\n\r]*
+MULTICOMMENTS :  "/*"(.|\r|\n)*"*/"
+#Tokens
+:{WHITESPACE}
+TBIN : B[0-1]+
+TOCT : 0[0-7]+
+THEX : 0x[0-9A-Fa-f]+
+TBOOL : (true|false)
+MULTICOMMENTS : {MULTICOMMENTS}
+FUNCTION : function
+TID : ({LETTER} | _ )({LETTER} | {DIGITS} | _ )*
+TCHAR : '.'
+TSTRING : \".+\"
+TFLOAT : {DIGITS}+\.{DIGITS}+
+TINT : {DIGITS}+
+
+///R.WORDS
+
+BEGIN = TID : "begin"
+END   = TID : "end"
+IF    = TID : "if"
+THEN  = TID : "then"
+ELSE  = TID : "else"
+WHILE = TID : "while"
+DO    = TID : "do"
+WRITE = TID : "write"
+
+///DECLARE
+	
+DINT = TID : "int"
+DSTRING = TID : "string"
+DCHAR = TID : "char"
+DFLOAT = TID : "float"
+DBOOL = TID : "bool"
+SUM : "+"
+SUB : "-"
+DIV : "/"
+MULT : "*"
+MOD : "%"
+
+//IN LOOPS
+DECREASE : "--"
+INCREASE : "++"
+
+RECEIVES : "="
+
+//RELATIONAL
+
+EQUAL : "=="
+GREATOREQ : ">="
+LESSOREQ : "<="
+DIFF : "!="
+GREATTHAN : ">"
+LESSTHAN : "<"
+
+//LOGICAL
+
+AND : "&&"
+OR : "||"
+NOT : "!"
+
+//BITWISE
+
+RIGHTSHIFT: ">>"
+LEFTSHIFT : "<<"
+BAND : "&"
+BOR : "|"
+XOR : "^"
+NOT : "~"
+
+COMMENTS : {COMMENTS}
+
+
+
+//DELIMITERS
+
+DOT : "."
+COMMA : ","
+COLON : ":"
+SEMICOLON : ";"
+CURLYBOPEN : "{"
+CURLYBCLOSE : "}"
+TCLOSEP : ")"
+TOPENP	: "("
+
+
+
