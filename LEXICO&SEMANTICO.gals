@@ -1,0 +1,294 @@
+#Options
+GenerateScanner = true
+GenerateParser = true
+Language = C++
+ScannerName = Lexico
+ParserName = Sintatico
+SemanticName = Semantico
+ScannerCaseSensitive = true
+ScannerTable = Full
+Input = Stream
+Parser = SLR
+#RegularDefinitions
+DIGITS : [0-9]
+LETTER : [A-Za-z]
+WHITESPACE :[\n\s\t\r\ ]*
+BAR : ["/"]
+COMMENTS: {BAR}{BAR}[^}\n\r]*
+MULTICOMMENTS :  "/*"(.|\r|\n)*"*/"
+#Tokens
+:{WHITESPACE}
+"*"
+"**"
+"++"
+"--"
+"+="
+"*="
+"-="
+"/="
+
+//aritmeticos
+"+"
+"-"
+"*"
+"/"
+"%"
+//relacional
+">"
+"<"
+">="
+"<="
+"="
+"!="
+//logicos
+"&&"
+"||"
+"!"
+// bitwise
+"~"
+">>"
+"<<"
+"^"
+"|"
+"&"
+// parenteses
+"("
+")"
+
+
+
+
+
+TBIN : B[0-1]+
+TOCT : 0[0-7]+
+THEX : 0x[0-9A-Fa-f]+
+TBOOL : (true|false)
+MULTICOMMENTS : {MULTICOMMENTS}
+FUNCTION : function
+TID : ({LETTER} | _ )({LETTER} | {DIGITS} | _ )*
+TCHAR : '[^']+'
+TSTRING : \"[^\"]*\"
+TFLOAT : {DIGITS}+\.{DIGITS}+
+TINT : {DIGITS}+
+
+///R.WORDS
+
+BEGIN = TID : "begin"
+END   = TID : "end"
+IF    = TID : "if"
+ELSE  = TID : "else"
+ELSE_IF = TID : "else_if"
+WHILE = TID : "while"
+DO    = TID : "do"
+WRITE = TID : "write"
+FOR = TID : "for"
+
+RETURN = TID: "return"
+VOID = TID: "void"
+//INPUTS
+CWRITE = TID : "cout"
+CREAD = TID : "cin"
+///DECLARE
+	
+DINT = TID : "int"
+DSTRING = TID : "string"
+DCHAR = TID : "char"
+DFLOAT = TID : "float"
+DBOOL = TID : "bool"
+SUM : "+"
+SUB : "-"
+DIV : "/"
+MULT : "*"
+MOD : "%"
+
+//IN LOOPS
+DECREASE : "--"
+INCREASE : "++"
+
+RECEIVES : "="
+
+//RELATIONAL
+
+EQUAL : "=="
+GREATOREQ : ">="
+LESSOREQ : "<="
+DIFF : "!="
+GREATTHAN : ">"
+LESSTHAN : "<"
+
+//LOGICAL
+
+AND : "&&"
+OR : "||"
+NOT : "!"
+
+//BITWISE
+
+RIGHTSHIFT: ">>"
+LEFTSHIFT : "<<"
+BAND : "&"
+BOR : "|"
+XOR : "^"
+NOT : "~"
+
+COMMENTS : {COMMENTS}
+
+
+
+//DELIMITERS
+
+DOT : "."
+COMMA : ","
+COLON : ":"
+SEMICOLON : ";"
+CURLYBOPEN : "{"
+CURLYBCLOSE : "}"
+TCLOSEP : ")"
+TOPENP	: "("
+OPENK : "["
+CLOSEK : "]"
+
+
+#NonTerminals
+<program>
+<cmdlist>
+<cmd>
+<assign>
+<assignmentExp>
+<assignmentExp2>
+<instance_or_new>
+<adress>
+<adress_or_mult>
+<self_assignment>
+<void_or_type>
+<arr>
+<arrOpt>
+<arr1>
+<arrElem>
+<arrElem2>
+<all_parameters>
+<variable_or_num>
+<parameters_or_none>
+<else>
+<else_if>
+<id_or_int>
+<declare_or_compose>
+<receives_from_function>
+<read>
+<read2>
+<write>
+<write2>
+<writeExp>
+<type>
+<type2>
+<instance_or_new2>
+<int>
+<input>
+<return_or_not>
+<multiIds>
+<multiIds2>
+<exp_with_increment>
+<exp>
+<exp1>
+<exp2>
+<exp3>
+<exp4>
+<exp5>
+<exp6>
+<exp7>
+<exp8>
+<exp9>
+<exp10>
+<exp11>
+<op_rel>
+<op_neg>
+<op_bitwise>
+<op_arit_baixa>
+<op_arit_alta>
+<op_arit_mais_alta>
+
+#Grammar
+<program> ::= BEGIN  <cmdlist> END SEMICOLON;
+<cmdlist> ::= <cmd> <cmdlist> | î;
+<cmd> ::= <assign> SEMICOLON;
+
+//ASSIGNMENT
+<assign>::= <instance_or_new> | <instance_or_new> <assignmentExp>  <exp> |<arrOpt> | TID <self_assignment> | <instance_or_new> COMMA <multiIds>| <instance_or_new> <receives_from_function>;
+<arrOpt>::= <type> TID <arr>|TID <arr1>  ;
+<arr>::=  OPENK CLOSEK <assignmentExp> CURLYBOPEN <arrElem> CURLYBCLOSE | OPENK TINT CLOSEK ;
+<arr1>::=  OPENK <variable_or_num> CLOSEK <assignmentExp> <assignmentExp2> | OPENK <variable_or_num> CLOSEK <receives_from_function>;
+<arrElem>::= <arrElem> <arrElem2>|  <exp10> | TSTRING;
+<arrElem2>::=  COMMA <exp10>| COMMA TSTRING;
+<assignmentExp>::= <op_arit_alta> | <op_rel> | <op_arit_baixa>| "+="|"-="|"/="|"*=";
+<assignmentExp2>::= <exp10> | <exp10><assignmentExp><assignmentExp2>   ;
+<receives_from_function>::=  <assignmentExp> TID "("<parameters_or_none> ")";
+<parameters_or_none>::= <multiIds> | î;
+<variable_or_num>::= <exp>;
+<instance_or_new>::= <type>  TID | TID; 
+<adress>::= <adress_or_mult> | î;
+<adress_or_mult>::= "*";
+
+///CONDITIONALS
+<cmd>::= IF "(" <exp> ")" CURLYBOPEN <cmdlist> CURLYBCLOSE ;
+<cmd>::= IF "(" <exp> ")" CURLYBOPEN <cmdlist> CURLYBCLOSE  <else_if> <else> ;
+<cmd>::= IF "(" <exp> ")" CURLYBOPEN <cmdlist> CURLYBCLOSE  <else> ; 
+
+<else_if>::=ELSE_IF "(" <exp> ")" CURLYBOPEN <cmdlist> CURLYBCLOSE  <else_if>|ELSE_IF "(" <exp> ")" CURLYBOPEN <cmdlist> CURLYBCLOSE ;
+<else>::=   ELSE CURLYBOPEN <cmdlist> CURLYBCLOSE;
+///LOOPS
+
+<cmd> ::= WHILE "("<exp>")" CURLYBOPEN <cmdlist> CURLYBCLOSE ;
+<cmd> ::= DO CURLYBOPEN <cmdlist> CURLYBCLOSE WHILE "("<exp>")" SEMICOLON;
+<cmd>::= FOR "(" <id_or_int> "=" TINT SEMICOLON <id_or_int> <op_rel> TINT SEMICOLON <exp_with_increment> ")"CURLYBOPEN <cmdlist> CURLYBCLOSE;
+<id_or_int>::= DINT TID  | TID;
+<exp_with_increment>::= <exp> | TID <self_assignment>;
+
+///INPUTS-OUTPUTS
+<cmd>::= <read> | <read> SEMICOLON;
+<read>::= <read> ">>" TID | <read2>;
+<read2>::= CREAD ">>" TID ;
+
+<cmd>::= <write> | <write> SEMICOLON;
+<write>::= <write> "<<" TID | <write> "<<" TSTRING|<write2>;
+<write2>::= CWRITE "<<" <writeExp>; 
+<writeExp>::= TSTRING | <exp7>;
+
+<cmd>::= <void_or_type> "("  <parameters_or_none> ")" <declare_or_compose>;
+
+<multiIds>::= <multiIds> COMMA <instance_or_new> |<multiIds> COMMA <instance_or_new2>|<multiIds2>;
+<multiIds2>::=  <all_parameters>;
+<declare_or_compose>::= CURLYBOPEN <cmdlist> CURLYBCLOSE | SEMICOLON;
+<return_or_not>::= RETURN <exp> SEMICOLON;
+<void_or_type>::= VOID | TID| VOID TID | <type> TID;
+<instance_or_new2>::= <type2> TID | "*" TID;
+
+<cmd>::= <return_or_not>;
+//WHY IS <INSTANCE_OR_NEW> NOT WORKING IN THE NEXT EXPRESSION?	
+<all_parameters>::= <instance_or_new>|
+<instance_or_new2>|
+<type> TID OPENK CLOSEK|
+<type> TID OPENK TINT CLOSEK |
+TID OPENK CLOSEK|
+TID OPENK TINT CLOSEK; 
+
+<exp>  ::= <exp> "||" <exp1> | <exp1>;
+<exp1> ::= <exp1> "&&"<exp2> |<exp2>;
+<exp2> ::= <exp2> "|" <exp3> | <exp3>;
+<exp3> ::= <exp3> "^" <exp4> | <exp4>;
+<exp4> ::= <exp4> "&" <exp5> | <exp5>;
+<exp5> ::= <exp5> <op_rel> <exp6> | <exp6>;
+<exp6> ::= <exp6> <op_bitwise> <exp7> | <exp7>;
+<exp7> ::= <exp7> <op_arit_baixa> <exp8> | <exp8>;
+<exp8> ::= <exp8> <op_arit_alta> <exp9> | <exp9> ;
+<exp9> ::= <op_neg> <exp10> | <exp10>;
+<exp10> ::= TID OPENK CLOSEK| OPENK CLOSEK|TID OPENK <variable_or_num> CLOSEK| OPENK <variable_or_num> CLOSEK |TINT | TFLOAT | TID | "(" <exp> ")";
+
+<op_rel> ::= ">" | "<" | ">=" | "<=" | "=" | "!="; 
+<op_neg> ::= "-" | "~" | "!";
+<op_bitwise> ::= "<<" | ">>";
+<op_arit_baixa> ::= "+" | "-";
+<op_arit_alta> ::= "*" | "/" | "%";
+<self_assignment>::= "++"| "--";
+
+<type>::=DINT|DSTRING|DFLOAT|DBOOL|DCHAR;
+<type2>::=DINT"*"|DSTRING"*"|DFLOAT"*"|DBOOL"*"|DCHAR"*";
