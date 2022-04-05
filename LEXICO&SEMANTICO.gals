@@ -1,13 +1,13 @@
 #Options
 GenerateScanner = true
 GenerateParser = true
-Language = C++
+Language = Java
 ScannerName = Lexico
 ParserName = Sintatico
 SemanticName = Semantico
 ScannerCaseSensitive = true
 ScannerTable = Full
-Input = Stream
+Input = String
 Parser = SLR
 #RegularDefinitions
 DIGITS : [0-9]
@@ -154,18 +154,19 @@ CLOSEK : "]"
 <cmdlist>
 <cmd>
 <assign>
-<assignmentExp>
-<assignmentExp2>
+<assignment_exp>
+<assignment_exp2>
 <instance_or_new>
 <adress>
 <adress_or_mult>
 <self_assignment>
 <void_or_type>
 <arr>
-<arrOpt>
+<arr_opt>
 <arr1>
-<arrElem>
-<arrElem2>
+<arr_elem>
+<arr_elem2>
+<self>
 <all_parameters>
 <variable_or_num>
 <parameters_or_none>
@@ -199,7 +200,6 @@ CLOSEK : "]"
 <exp8>
 <exp9>
 <exp10>
-<exp11>
 <op_rel>
 <op_neg>
 <op_bitwise>
@@ -208,25 +208,27 @@ CLOSEK : "]"
 <op_arit_mais_alta>
 
 #Grammar
+
 <program> ::= BEGIN  <cmdlist> END SEMICOLON;
-<cmdlist> ::= <cmd> <cmdlist> | î;
+<cmdlist> ::= <cmd> <cmdlist> | Ã®;
 <cmd> ::= <assign> SEMICOLON;
 
 //ASSIGNMENT
-<assign>::= <instance_or_new> | <instance_or_new> <assignmentExp>  <exp> |<arrOpt> | TID <self_assignment> | <instance_or_new> COMMA <multiIds>| <instance_or_new> <receives_from_function>;
-<arrOpt>::= <type> TID <arr>|TID <arr1>  ;
-<arr>::=  OPENK CLOSEK <assignmentExp> CURLYBOPEN <arrElem> CURLYBCLOSE | OPENK TINT CLOSEK ;
-<arr1>::=  OPENK <variable_or_num> CLOSEK <assignmentExp> <assignmentExp2> | OPENK <variable_or_num> CLOSEK <receives_from_function>;
-<arrElem>::= <arrElem> <arrElem2>|  <exp10> | TSTRING;
-<arrElem2>::=  COMMA <exp10>| COMMA TSTRING;
-<assignmentExp>::= <op_arit_alta> | <op_rel> | <op_arit_baixa>| "+="|"-="|"/="|"*=";
-<assignmentExp2>::= <exp10> | <exp10><assignmentExp><assignmentExp2>   ;
-<receives_from_function>::=  <assignmentExp> TID "("<parameters_or_none> ")";
-<parameters_or_none>::= <multiIds> | î;
+<assign>::= <instance_or_new> | <instance_or_new> <assignment_exp>  <exp> |<arr_opt> | TID <self_assignment> | <instance_or_new> COMMA <multiIds>| <instance_or_new> <receives_from_function>;
+<arr_opt>::= <type> TID <arr>|TID <arr1>  ;
+<arr>::=  OPENK CLOSEK <assignment_exp> CURLYBOPEN <arr_elem> CURLYBCLOSE | OPENK TINT CLOSEK ;
+<arr1>::=  OPENK <variable_or_num> CLOSEK <assignment_exp> <assignment_exp2> | OPENK <variable_or_num> CLOSEK <receives_from_function>;
+<arr_elem>::= <arr_elem> <arr_elem2>|  <exp10> | TSTRING;
+<arr_elem2>::=  COMMA <exp10>| COMMA TSTRING;
+<assignment_exp>::= <op_arit_alta> | <op_rel> | <op_arit_baixa>|<self>;
+<assignment_exp2>::= <exp10> | <exp10><assignment_exp><assignment_exp2>   ;
+<receives_from_function>::=  <assignment_exp> TID "("<parameters_or_none> ")";
+<parameters_or_none>::= <multiIds> | Ã®;
 <variable_or_num>::= <exp>;
 <instance_or_new>::= <type>  TID | TID; 
-<adress>::= <adress_or_mult> | î;
+<adress>::= <adress_or_mult> | Ã®;
 <adress_or_mult>::= "*";
+
 
 ///CONDITIONALS
 <cmd>::= IF "(" <exp> ")" CURLYBOPEN <cmdlist> CURLYBCLOSE ;
@@ -289,6 +291,7 @@ TID OPENK TINT CLOSEK;
 <op_arit_baixa> ::= "+" | "-";
 <op_arit_alta> ::= "*" | "/" | "%";
 <self_assignment>::= "++"| "--";
-
+<self>::=  "+="|"-="|"/="|"*=";
 <type>::=DINT|DSTRING|DFLOAT|DBOOL|DCHAR;
 <type2>::=DINT"*"|DSTRING"*"|DFLOAT"*"|DBOOL"*"|DCHAR"*";
+
